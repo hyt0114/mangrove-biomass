@@ -28,9 +28,6 @@ const _sfc_main = {
     onInputChange(e) {
       this.$emit("update:value", e);
     }
-  },
-  options: {
-    styleIsolation: "shared"
   }
 };
 if (!Array) {

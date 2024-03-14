@@ -30,6 +30,7 @@
 					<view v-if="calcResult.hasOwnProperty('whole')"><text>总量：{{calcResult.whole}}</text> <text class="text-muted ml-5">kg DW</text></view>
 					<view v-if="calcResult.hasOwnProperty('top')"><text>地上部：{{calcResult.top}}</text> <text class="text-muted ml-5">kg DW</text></view>
 					<view v-if="calcResult.hasOwnProperty('bottom')"><text>地下部：{{calcResult.bottom}}</text> <text class="text-muted ml-5">kg DW</text></view>
+					<view v-if="calcResult.hasOwnProperty('cf')"><text>含碳率：{{calcResult.cf}}</text> <text class="text-muted ml-5">Kg C</text></view>
 				</view>
 			</uni-popup-dialog>
 		</uni-popup>
@@ -82,12 +83,17 @@
 					this.$refs.message.open();
 					return;
 				}
-				this.calcResult = calc(this.formData.kind, this.formData.dbh, this.formData.height, this.formData.density);
-				if (this.calcResult) {
-					this.$refs.alertDialog.open();
-				} else {
-					this.errorMessage = "未知错误";
-					this.$refs.message.open()
+				try{
+					this.calcResult = calc(this.formData.kind, this.formData.dbh, this.formData.height, this.formData.density);
+					if (this.calcResult) {
+						this.$refs.alertDialog.open();
+					} else {
+						this.errorMessage = "未知错误";
+						this.$refs.message.open()
+					}
+				}catch(e){
+					this.errorMessage = e.message || "参数错误";
+					this.$refs.message.open();
 				}
 
 			}

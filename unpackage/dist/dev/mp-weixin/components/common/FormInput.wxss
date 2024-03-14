@@ -23,10 +23,12 @@
 /* 垂直间距 */
 /* 透明度 */
 /* 文章场景相关 */
-.flex .prefix-input.data-v-870e8fdf  {
-  border-radius: none !important;
+.prefix-input.data-v-870e8fdf .uni-easyinput__content {
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
 }
 .suffix.data-v-870e8fdf {
-  width: 2.5rem;
-  background-color: #e0e0e0;
+  width: 3rem;
+  color: #666;
+  background-color: #f0f0f0;
 }

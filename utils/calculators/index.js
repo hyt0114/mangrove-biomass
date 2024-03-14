@@ -30,7 +30,7 @@ export default function calc(type, dbh, height, density) {
 	} else if (type === 9 || type === 10) {
 		return new Rhizophora(dbh,density).calc();
 	}else if (type === 11) {
-		return new Sonneratia(dbh).calc();
+		return new Sonneratia(dbh,height).calc();
 	} else if (type === -1) {
 		return new UnknownKind(dbh, density).calc();
 	}

@@ -4,6 +4,7 @@ import config from "../config.js"
 export default class Kandelia {
 	#dbh;
 	#height;
+	#rate=0.47
 	constructor(dbh, height) {
 		this.#dbh = dbh;
 		this.#height = height;
@@ -22,6 +23,7 @@ export default class Kandelia {
 		return {
 			top: top.toFixed(config.digitLen),
 			bottom: bottom.toFixed(config.digitLen),
+			cf:this.calcCf(top,bottom)
 		}
 	}
 	calcByHigh() {
@@ -30,6 +32,22 @@ export default class Kandelia {
 		return {
 			top: top.toFixed(config.digitLen),
 			bottom: bottom.toFixed(config.digitLen),
+			cf:this.calcCf(top,bottom)
+		}
+	}
+	calcCf(...nums){
+		let total = new Decimal(0);
+		nums.forEach(num=>{
+			total = total.plus(num)
+		})
+		return total.times(this.#rate).toFixed(config.digitLen);
+	}
+	validator(){
+		if(!this.#dbh){
+			throw new Error("请输入胸径/基径");
+		}
+		if(!this.#height){
+			throw new Error("请输入树高");
 		}
 	}
 }
