@@ -1,0 +1,1 @@
+<view class="flex data-v-870e8fdf"><uni-easyinput wx:if="{{c}}" bindinput="{{a}}" class="prefix-input data-v-870e8fdf" u-i="870e8fdf-0" bind:__l="__l" bindupdateModelValue="{{b}}" u-p="{{c}}"></uni-easyinput><view wx:if="{{d}}" class="flex flex-shrink-0 items-center justify-center suffix data-v-870e8fdf">{{e}}</view></view>

@@ -1,0 +1,13 @@
+{
+  "hash": "eb7f250b",
+  "browserHash": "fc71c12d",
+  "optimized": {
+    "decimal.js": {
+      "src": "../../node_modules/decimal.js/decimal.mjs",
+      "file": "decimal__js.js",
+      "fileHash": "e373edb1",
+      "needsInterop": false
+    }
+  },
+  "chunks": {}
+}
