@@ -4,20 +4,23 @@ import config from "../config.js"
 export default class Rhizophora {
 	#dbh;
 	#density;
-	#rate=0.46
+	#shape;
+	#rate=0.46;
 	constructor(dbh, density) {
 		this.#dbh = dbh;
 		this.#density = density;
 	}
+	setShape(shape) {
+		this.#shape = shape;
+	}
 	calc() {
-		this.validator();
-		const top = new Decimal(0.235).times(new Decimal(this.#dbh).pow(2.42));
-		const bottom = new Decimal(0.199).times(new Decimal(this.#density  || config.defaultDensity).pow(0.899)).times(new Decimal(this.#dbh)
+		const wa = new Decimal(0.235).times(new Decimal(this.#dbh).pow(2.42));
+		const wb = new Decimal(0.199).times(new Decimal(this.#density  || config.defaultDensity).pow(0.899)).times(new Decimal(this.#dbh)
 			.pow(2.22));
 		return {
-			top: top.toFixed(config.digitLen),
-			bottom: bottom.toFixed(config.digitLen),
-			cf:this.calcCf(top,bottom)
+			wa: wa.toFixed(config.digitLen),
+			wb: wb.toFixed(config.digitLen),
+			cf:this.calcCf(wa,wb)
 		}
 	}
 	calcCf(...nums){
@@ -27,9 +30,9 @@ export default class Rhizophora {
 		})
 		return total.times(this.#rate).toFixed(config.digitLen);
 	}
-	validator(){
+	validate(){
 		if(!this.#dbh){
-			throw new Error("请输入胸径/基径");
+			throw new Error("请输入胸径");
 		}
 	}
 }

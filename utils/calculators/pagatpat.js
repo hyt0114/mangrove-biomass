@@ -1,7 +1,7 @@
 import Decimal from 'decimal.js';
 import config from "../config.js"
 //#海桑属
-export default class Sonneratia  {
+export default class Pagatpat  {
 	#dbh;
 	#height;
 	#shape;
@@ -14,8 +14,12 @@ export default class Sonneratia  {
 		this.#shape = shape;
 	}
 	calc() {
-		const wt = new Decimal(this.#dbh).pow(2).times(this.#height).pow(0.8532).times(0.08469);
+		const wa = new Decimal(this.#dbh).pow(2).times(this.#height).pow(0.966).times(0.034);
+		const wb = new Decimal(this.#dbh).pow(2).times(this.#height).pow(1.119).times(0.003);
+		const wt = new Decimal(this.#dbh).pow(2).times(this.#height).pow(1.002).times(0.033);
 		return {
+			wa: wt.toFixed(config.digitLen),
+			wb: wb.toFixed(config.digitLen),
 			wt: wt.toFixed(config.digitLen),
 			cf:this.calcCf(wt)
 		}
