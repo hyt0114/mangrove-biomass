@@ -18,39 +18,75 @@
 					<FormInput v-model:value="formData.basal" suffix="cm" />
 					<view class="form-tip" v-if="dbhHelpText">{{dbhHelpText}}</view>
 				</uni-forms-item>
-				<uni-forms-item label="冠幅" name='crown'  v-if="showFields.crown">
+				<uni-forms-item label="冠幅" name='crown' v-if="showFields.crown">
 					<FormInput v-model:value="formData.crown" suffix="m2" />
 				</uni-forms-item>
-				<uni-forms-item label="树高" name='height'  v-if="showFields.height">
+				<uni-forms-item label="树高" name='height' v-if="showFields.height">
 					<FormInput v-model:value="formData.height" suffix="m" />
 				</uni-forms-item>
-				<uni-forms-item label="密度" name='density'  v-if="showFields.density">
-					<FormInput v-model:value="formData.density" suffix="g/m3" />
+				<uni-forms-item label="密度" name='density' v-if="showFields.density">
+					<FormInput v-model:value="formData.density" suffix="g.cm3" />
+					<view class="form-helper" @click="onPopDensityList">
+						<view class="form-helper-text">查看常见木材密度</view>
+						<image src="/static/img/search.png" class="search-icon"></image>
+					</view>
 				</uni-forms-item>
 			</template>
 
 			<template v-if="needCalcType">
 				<view class="btn-group">
-					<button  @click="calcBiomass(false)" class="btn-primary">使用胸径计算</button>
-					<button  @click="calcBiomass(true)" class="btn-success" >使用基径计算</button>
+					<button @click="calcBiomass(false)" class="btn-primary">使用胸径计算</button>
+					<button @click="calcBiomass(true)" class="btn-success">使用基径计算</button>
 				</view>
 			</template>
 			<template v-else><button @click="calcBiomass(false)" class="btn-primary">计算</button></template>
 
 		</uni-forms>
-		<uni-popup ref="alertDialog" type="dialog">
-			<uni-popup-dialog type="info" :showClose="false" confirmText="确定" title="计算结果">
-				<view class="dialog-content">
-					<view v-if="calcResult.hasOwnProperty('wt')"><text>总量：{{calcResult.wt}}</text> <text
-							class="text-muted ml-5">kg DW</text></view>
-					<view v-if="calcResult.hasOwnProperty('wa')"><text>地上部：{{calcResult.wa}}</text> <text
-							class="text-muted ml-5">kg DW</text></view>
-					<view v-if="calcResult.hasOwnProperty('wb')"><text>地下部：{{calcResult.wb}}</text> <text
-							class="text-muted ml-5">kg DW</text></view>
-					<view v-if="calcResult.hasOwnProperty('cf')"><text>含碳率：{{calcResult.cf}}</text> <text
-							class="text-muted ml-5">Kg C</text></view>
+		<uni-popup ref="resultPopup" type="bottom" :safe-area="false">
+			<view class="popup-content">
+				<view class="popup-content-title">
+					<view class="title-text">计算结果</view>
+					<image src="/static/img/close.png" class="title-close-btn" @click="closePopup"></image>
 				</view>
-			</uni-popup-dialog>
+				<view class="popup-content-main">
+					<view v-if="handleResultShowField('wt')" class="result-field-line">
+						<view class="result-field-line-label">总量</view>
+						<view class="result-field-line-text">{{calcResult.wt}}</view>
+						<view class="result-field-line-unit">kg DW</view>
+					</view>
+					<view v-if="handleResultShowField('wa')" class="result-field-line">
+						<view class="result-field-line-label">地上部</view>
+						<view class="result-field-line-text">{{calcResult.wa}}</view>
+						<view class="result-field-line-unit">kg DW</view>
+					</view>
+					<view v-if="handleResultShowField('wb')" class="result-field-line">
+						<view class="result-field-line-label">地下部</view>
+						<view class="result-field-line-text">{{calcResult.wb}}</view>
+						<view class="result-field-line-unit">kg DW</view>
+					</view>
+					<view v-if="handleResultShowField('cf')" class="result-field-line">
+						<view class="result-field-line-label">碳含量</view>
+						<view class="result-field-line-text">{{calcResult.cf}}</view>
+						<view class="result-field-line-unit">kg C</view>
+					</view>
+				</view>
+			</view>
+		</uni-popup>
+
+		<uni-popup ref="densityPopup" type="bottom" :safe-area="false">
+			<view class="popup-content">
+				<view class="popup-content-title">
+					<view class="title-text">常见木材密度(g·cm3)</view>
+					<image src="/static/img/close.png" class="title-close-btn" @click="closeDensityPopup"></image>
+				</view>
+				<scroll-view scroll-y class="popup-content-scroll">
+					<view v-for="(item,index) in densities" :key="index" class="scroll-field-line">
+						<view class="scroll-field-line-label">{{item.text}}</view>
+						<view class="scroll-field-line-text">{{item.value}}</view>
+						<view class="scroll-field-line-copy" @click="onUseDensity(item.value)">使用</view>
+					</view>
+				</scroll-view>
+			</view>
 		</uni-popup>
 		<uni-popup ref="message" type="message">
 			<uni-popup-message type="error" :message="errorMessage" :duration="2000"></uni-popup-message>
@@ -69,7 +105,10 @@
 		getFormFields,
 		getNeedCalcType
 	} from '/utils/form-utils.js'
-	import calc from "/utils/calculators/index.js"
+	import calc from "/utils/calculators/index.js";
+	import {
+		densities
+	} from "/utils/enums.js";
 	export default {
 		data() {
 			return {
@@ -94,7 +133,8 @@
 					density: false,
 					crown: false
 				},
-				needCalcType: false
+				needCalcType: false,
+				densities: densities
 			}
 		},
 		onLoad() {
@@ -147,7 +187,7 @@
 					return;
 				}
 				try {
-					
+
 					this.calcResult = calc({
 						type: this.formData.kind,
 						shape: this.formData.shape,
@@ -161,7 +201,7 @@
 						} : null
 					});
 					if (this.calcResult) {
-						this.$refs.alertDialog.open();
+						this.$refs.resultPopup.open();
 					} else {
 						this.errorMessage = "未知错误";
 						this.$refs.message.open()
@@ -170,7 +210,22 @@
 					this.errorMessage = e.message || "参数错误";
 					this.$refs.message.open();
 				}
-
+			},
+			handleResultShowField(field) {
+				return this.calcResult.hasOwnProperty(field);
+			},
+			closePopup() {
+				this.$refs.resultPopup.close();
+			},
+			onPopDensityList() {
+				this.$refs.densityPopup.open();
+			},
+			closeDensityPopup() {
+				this.$refs.densityPopup.close();
+			},
+			onUseDensity(text) {
+				this.formData.density = text;
+				this.closeDensityPopup();
 			}
 		},
 		components: {
@@ -185,30 +240,157 @@
 		height: 100%;
 		width: 100%;
 		overflow-y: auto;
-		background:linear-gradient(135deg,#fff 40%,#8cde9b);
+		background: linear-gradient(135deg, #fff 40%, #8cde9b);
 		box-sizing: border-box;
+
 		.form-tip {
 			font-size: 12px;
 			color: #999;
 			margin-top: 3px;
 		}
 
-		.dialog-content {
-			padding: 10px;
-			border-radius: 12px;
-			background-color: #fff;
+		.form-helper {
+			display: flex;
+			align-items: center;
+			margin-top: 5px;
+			&-text{
+				font-size: 12px;
+				color: #2979ff;
+				margin-right: 5px;
+			}
+			.search-icon{
+				width: 12px;
+				height: 12px;
+			}
 		}
+
+		.popup-content {
+			height: 55vh;
+			border-top-left-radius: 22px;
+			border-top-right-radius: 22px;
+			background-color: #fff;
+			padding-bottom: 60px;
+			box-sizing: border-box;
+
+			.popup-content-title {
+				height: 44px;
+				font-size: 18px;
+				border-bottom: 1px solid #f0f0f0;
+				display: flex;
+				align-items: center;
+				position: relative;
+
+				.title-text {
+					flex: 1;
+					text-align: center;
+					font-weight: bold;
+				}
+
+				.title-close-btn {
+					width: 38px;
+					height: 38px;
+					position: absolute;
+					right: 0;
+					top: 0;
+				}
+			}
+
+			.popup-content-main {
+				padding: 15px 10px;
+				box-sizing: border-box;
+				height: 100%;
+
+				.result-field-line {
+					display: flex;
+					align-items: center;
+					height: 40px;
+					border-bottom: 1px solid #f0f0f0;
+
+					&-label {
+						width: 80px;
+						text-align: right;
+						color: #666;
+						margin-right: 5px;
+
+						&::after {
+							content: "：";
+						}
+					}
+
+					&-text {
+						flex: 1;
+						color: #18bc37;
+						font-weight: bold;
+						display: flex;
+						justify-content: flex-end;
+						margin-right: 20px;
+					}
+
+					&-unit {
+						width: 50px;
+						font-size: 12px;
+						background-color: #f0f0f0;
+						padding: 4px 8px;
+						color: #666;
+						border-radius: 4px;
+						flex-shrink: 0;
+						text-align: center;
+					}
+				}
+			}
+
+			.popup-content-scroll {
+				height: 100%;
+
+				.scroll-field-line {
+					display: flex;
+					align-items: center;
+					height: 42px;
+					border-bottom: 1px solid #f0f0f0;
+					padding: 0 10px;
+
+					&-label {
+						color: #666;
+					}
+
+					&-text {
+						flex: 1;
+						color: #2979ff;
+						display: flex;
+						font-weight: bold;
+						justify-content: flex-end;
+						margin-right: 20px;
+					}
+
+					&-copy {
+						width: 50px;
+						font-size: 12px;
+						background-color: #f0f0f0;
+						padding: 4px 8px;
+						color: #fff;
+						background-color: #18bc37;
+						border-radius: 4px;
+						flex-shrink: 0;
+						text-align: center;
+					}
+				}
+			}
+		}
+
 	}
-	.btn-group{
+
+	.btn-group {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
 	}
-	.btn-primary{
+
+	.btn-primary {
 		background-color: #2979ff;
 		color: #fff;
 	}
-	.btn-success{
+
+	.btn-success {
 		background-color: #18bc37;
 		color: #fff;
 	}

@@ -33,7 +33,7 @@ export default function calc({
 	} else if (type === 3) {
 		targetTreeCalc = new Avicennia(dbh, basal, height, crown)
 	} else if (type === 4) {
-		targetTreeCalc = new RhizophoraStylosaGriff(dbh, height)
+		targetTreeCalc = new RhizophoraStylosaGriff(dbh, density)
 	} else if (type === 5 || type === 6 || type === 7) {
 		targetTreeCalc = new BruguieraGymnorrhiza(dbh, basal, height)
 	} else if (type === 8) {

@@ -3,18 +3,18 @@ import config from "../config.js"
 //#红海榄
 export default class RhizophoraStylosaGriff {
 	#dbh;
-	#height;
+	#density;
 	#shape;
 	#rate=0.46
-	constructor(dbh,height) {
+	constructor(dbh,density) {
 		this.#dbh = dbh;
-		this.#height = height;
+		this.#density = density;
 	}
 	setShape(shape) {
 		this.#shape = shape;
 	}
 	calc() {
-		const wt = new Decimal(0.1719).times(new Decimal(this.#dbh).pow(2).times(this.#height).pow(1.0254));
+		const wt = new Decimal(this.#density).pow(0.899).times(new Decimal(this.#dbh).pow(2.22)).times(0.1719);
 		return {
 			wt: wt.toFixed(config.digitLen),
 			cf:this.calcCf(wt)
@@ -29,10 +29,10 @@ export default class RhizophoraStylosaGriff {
 	}
 	validate(){
 		if(!this.#dbh){
-			throw new Error("请输入胸径/基径");
+			throw new Error("请输入胸径");
 		}
-		if(!this.#height){
-			throw new Error("请输入树高");
+		if(!this.#density){
+			throw new Error("请输入密度");
 		}
 	}
 }

@@ -61,7 +61,7 @@ export const mangroveKinds = [{
 		shapes: [shapeEnums.MACROPHANEROPHYTES],
 		fields: {
 			[shapeEnums.MACROPHANEROPHYTES.value]: [
-				"dbh", "height"
+				"dbh", "density"
 			],
 		}
 	},

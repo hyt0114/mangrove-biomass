@@ -20,3 +20,52 @@ export const shapeEnums = {
 		value: 5
 	} //幼龄植株
 }
+export const densities = [{
+		text: "白骨壤",
+		value: "0.62"
+	},
+	{
+		text: "桐花树",
+		value: "0.34"
+	},
+	{
+		text: "秋茄",
+		value: "0.34"
+	},
+	{
+		text: "红海榄",
+		value: "0.77"
+	},
+	{
+		text: "木榄",
+		value: "0.81"
+	},
+	{
+		text: "角果木",
+		value: "0.85"
+	},
+	{
+		text: "红树",
+		value: "0.87"
+	},
+	{
+		text: "木果楝",
+		value: "0.61"
+	},
+	{
+		text: "海漆",
+		value: "0.41"
+	},
+	{
+		text: "杯萼海桑",
+		value: "0.47"
+	},
+	{
+		text: "拉关木",
+		value: "0.60"
+	},
+	{
+		text: "无瓣海桑",
+		value: "0.50"
+	}
+]
