@@ -31,11 +31,11 @@
 
 			<template v-if="needCalcType">
 				<view class="btn-group">
-					<button  @click="calcBiomass()" class="btn-primary">使用胸径计算</button>
+					<button  @click="calcBiomass(false)" class="btn-primary">使用胸径计算</button>
 					<button  @click="calcBiomass(true)" class="btn-success" >使用基径计算</button>
 				</view>
 			</template>
-			<template v-else><button @click="calcBiomass()" class="btn-primary">计算</button></template>
+			<template v-else><button @click="calcBiomass(false)" class="btn-primary">计算</button></template>
 
 		</uni-forms>
 		<uni-popup ref="alertDialog" type="dialog">
@@ -147,8 +147,7 @@
 					return;
 				}
 				try {
-					//this.formData.kind, this.formData.shape, this.formData.dbh, this.formData.basal,
-					//	this.formData.height, this.formData.density, this.formData.crown
+					
 					this.calcResult = calc({
 						type: this.formData.kind,
 						shape: this.formData.shape,
@@ -183,7 +182,11 @@
 <style scoped lang="scss">
 	.content {
 		padding: 10px;
-
+		height: 100%;
+		width: 100%;
+		overflow-y: auto;
+		background:linear-gradient(135deg,#fff 40%,#8cde9b);
+		box-sizing: border-box;
 		.form-tip {
 			font-size: 12px;
 			color: #999;
