@@ -10,32 +10,32 @@
 					<uni-data-picker v-model="formData.shape" :localdata="shapes" popup-title="请选择"
 						@change="onShapeChange" :clear-icon="false"></uni-data-picker>
 				</uni-forms-item>
-				<uni-forms-item label="胸径" name='dbh' v-show="showFields.dbh">
+				<uni-forms-item label="胸径" name='dbh' v-if="showFields.dbh">
 					<FormInput v-model:value="formData.dbh" suffix="cm" />
 					<view class="form-tip" v-if="dbhHelpText">{{dbhHelpText}}</view>
 				</uni-forms-item>
-				<uni-forms-item label="基径" name='basal' v-show="showFields.basal">
+				<uni-forms-item label="基径" name='basal' v-if="showFields.basal">
 					<FormInput v-model:value="formData.basal" suffix="cm" />
 					<view class="form-tip" v-if="dbhHelpText">{{dbhHelpText}}</view>
 				</uni-forms-item>
-				<uni-forms-item label="冠幅" name='crown' v-show="showFields.crown">
+				<uni-forms-item label="冠幅" name='crown'  v-if="showFields.crown">
 					<FormInput v-model:value="formData.crown" suffix="m2" />
 				</uni-forms-item>
-				<uni-forms-item label="树高" name='height' v-show="showFields.height">
+				<uni-forms-item label="树高" name='height'  v-if="showFields.height">
 					<FormInput v-model:value="formData.height" suffix="m" />
 				</uni-forms-item>
-				<uni-forms-item label="密度" name='density' v-show="showFields.density">
+				<uni-forms-item label="密度" name='density'  v-if="showFields.density">
 					<FormInput v-model:value="formData.density" suffix="g/m3" />
 				</uni-forms-item>
 			</template>
 
 			<template v-if="needCalcType">
 				<view class="btn-group">
-					<button type="primary" @click="calcBiomass()">使用胸径计算</button>
-					<button type="primary" @click="calcBiomass(true)" class="btn-green">使用基径计算</button>
+					<button  @click="calcBiomass()" class="btn-primary">使用胸径计算</button>
+					<button  @click="calcBiomass(true)" class="btn-success" >使用基径计算</button>
 				</view>
 			</template>
-			<template v-else><button type="primary" @click="calcBiomass()">计算</button></template>
+			<template v-else><button @click="calcBiomass()" class="btn-primary">计算</button></template>
 
 		</uni-forms>
 		<uni-popup ref="alertDialog" type="dialog">
@@ -200,8 +200,13 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		.btn-green{
-			background-color: #18bc37;
-		}
+	}
+	.btn-primary{
+		background-color: #2979ff;
+		color: #fff;
+	}
+	.btn-success{
+		background-color: #18bc37;
+		color: #fff;
 	}
 </style>
