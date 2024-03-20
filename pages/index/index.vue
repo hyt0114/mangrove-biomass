@@ -1,14 +1,15 @@
 <template>
+	<page-meta :page-style="'overflow:'+(hasPoper?'hidden':'visible')"></page-meta>
 	<view class="content">
 		<uni-forms label-align="right" label-width="5rem">
 			<uni-forms-item label="树种" name='kind'>
 				<uni-data-picker v-model="formData.kind" :localdata="mangroveKinds" popup-title="请选择"
-					@change="onKindChange"></uni-data-picker>
+					@change="onKindChange" @popupopened="onPopupStatusChange(true)" @popupclosed="onPopupStatusChange(false)"></uni-data-picker>
 			</uni-forms-item>
 			<template v-if="formData.kind">
 				<uni-forms-item label="树形" name='shape'>
 					<uni-data-picker v-model="formData.shape" :localdata="shapes" popup-title="请选择"
-						@change="onShapeChange" :clear-icon="false"></uni-data-picker>
+						@change="onShapeChange" :clear-icon="false" @popupopened="onPopupStatusChange(true)" @popupclosed="onPopupStatusChange(false)"></uni-data-picker>
 				</uni-forms-item>
 				<uni-forms-item label="胸径" name='dbh' v-if="showFields.dbh">
 					<FormInput v-model:value="formData.dbh" suffix="cm" />
@@ -42,7 +43,7 @@
 			<template v-else><button @click="calcBiomass(false)" class="btn-primary">计算</button></template>
 
 		</uni-forms>
-		<uni-popup ref="resultPopup" type="bottom" :safe-area="false">
+		<uni-popup ref="resultPopup" type="bottom" :safe-area="false" @change="e=>onPopupStatusChange(e.show)">
 			<view class="popup-content">
 				<view class="popup-content-title">
 					<view class="title-text">计算结果</view>
@@ -73,7 +74,7 @@
 			</view>
 		</uni-popup>
 
-		<uni-popup ref="densityPopup" type="bottom" :safe-area="false">
+		<uni-popup ref="densityPopup" type="bottom" :safe-area="false"  @change="e=>onPopupStatusChange(e.show)">
 			<view class="popup-content">
 				<view class="popup-content-title">
 					<view class="title-text">常见木材密度(g·cm3)</view>
@@ -134,7 +135,8 @@
 					crown: false
 				},
 				needCalcType: false,
-				densities: densities
+				densities: densities,
+				hasPoper:false
 			}
 		},
 		onLoad() {
@@ -226,6 +228,9 @@
 			onUseDensity(text) {
 				this.formData.density = text;
 				this.closeDensityPopup();
+			},
+			onPopupStatusChange(show){
+				this.hasPoper = show;
 			}
 		},
 		components: {
@@ -273,8 +278,8 @@
 			box-sizing: border-box;
 
 			.popup-content-title {
-				height: 44px;
-				font-size: 18px;
+				height: 38px;
+				font-size: 16px;
 				border-bottom: 1px solid #f0f0f0;
 				display: flex;
 				align-items: center;
