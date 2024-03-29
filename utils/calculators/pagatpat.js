@@ -21,6 +21,8 @@ export default class Pagatpat  {
 			wa: wt.toFixed(config.digitLen),
 			wb: wb.toFixed(config.digitLen),
 			wt: wt.toFixed(config.digitLen),
+			ca: this.calcCf(wa),
+			cb:this.calcCf(wb),
 			cf:this.calcCf(wt)
 		}
 	}

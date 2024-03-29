@@ -31,12 +31,15 @@ export default class Aegiceras {
 	//乔木
 	calcByMacrophanerophytes() {
 		const wa = new Decimal(10).pow(new Decimal(1.496).plus(new Decimal(0.465).times(Decimal.log10(new Decimal(
-			this.#dbh).pow(2).times(this.#height)))));
+			this.#dbh).dividedBy(10).pow(2).times(this.#height)))));
 		const wb = new Decimal(10).pow(new Decimal(0.967).plus(new Decimal(0.303).times(Decimal.log10(new Decimal(
-			this.#dbh).pow(2).times(this.#height)))));
+			this.#dbh).dividedBy(10).pow(2).times(this.#height)))));
 		return {
 			wa: wa.toFixed(config.digitLen),
 			wb: wb.toFixed(config.digitLen),
+			wt: wa.plus(wb).toFixed(config.digitLen),
+			ca: this.calcCf(wa),
+			cb: this.calcCf(wb),
 			cf: this.calcCf(wa, wb)
 		}
 	}
@@ -47,6 +50,9 @@ export default class Aegiceras {
 		return {
 			wa: wa.toFixed(config.digitLen),
 			wb: wb.toFixed(config.digitLen),
+			wt: wa.plus(wb).toFixed(config.digitLen),
+			ca: this.calcCf(wa),
+			cb: this.calcCf(wb),
 			cf: this.calcCf(wa, wb)
 		}
 	}
@@ -55,7 +61,7 @@ export default class Aegiceras {
 		const wa = new Decimal(0.02039).times(new Decimal(this.#basal).pow(2).times(this.#height).pow(0.83749));
 		return {
 			wa: wa.toFixed(config.digitLen),
-			cf: this.calcCf(wa)
+			ca: this.calcCf(wa)
 		}
 	}
 	calcCf(...nums) {

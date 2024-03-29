@@ -4,12 +4,14 @@
 		<uni-forms label-align="right" label-width="5rem">
 			<uni-forms-item label="树种" name='kind'>
 				<uni-data-picker v-model="formData.kind" :localdata="mangroveKinds" popup-title="请选择"
-					@change="onKindChange" @popupopened="onPopupStatusChange(true)" @popupclosed="onPopupStatusChange(false)"></uni-data-picker>
+					@change="onKindChange" @popupopened="onPopupStatusChange(true)"
+					@popupclosed="onPopupStatusChange(false)"></uni-data-picker>
 			</uni-forms-item>
 			<template v-if="formData.kind">
 				<uni-forms-item label="树形" name='shape'>
 					<uni-data-picker v-model="formData.shape" :localdata="shapes" popup-title="请选择"
-						@change="onShapeChange" :clear-icon="false" @popupopened="onPopupStatusChange(true)" @popupclosed="onPopupStatusChange(false)"></uni-data-picker>
+						@change="onShapeChange" :clear-icon="false" @popupopened="onPopupStatusChange(true)"
+						@popupclosed="onPopupStatusChange(false)"></uni-data-picker>
 				</uni-forms-item>
 				<uni-forms-item label="胸径" name='dbh' v-if="showFields.dbh">
 					<FormInput v-model:value="formData.dbh" suffix="cm" />
@@ -50,31 +52,41 @@
 					<image src="/static/img/close.png" class="title-close-btn" @click="closePopup"></image>
 				</view>
 				<view class="popup-content-main">
-					<view v-if="handleResultShowField('wt')" class="result-field-line">
-						<view class="result-field-line-label">总量</view>
-						<view class="result-field-line-text">{{calcResult.wt}}</view>
+					<view v-if="handleResultShowField('wa')" class="result-field-line">
+						<view class="result-field-line-label">地上部生物量</view>
+						<view class="result-field-line-text ">{{calcResult.wa}}</view>
 						<view class="result-field-line-unit">kg DW</view>
 					</view>
-					<view v-if="handleResultShowField('wa')" class="result-field-line">
-						<view class="result-field-line-label">地上部</view>
-						<view class="result-field-line-text">{{calcResult.wa}}</view>
-						<view class="result-field-line-unit">kg DW</view>
+					<view v-if="handleResultShowField('ca')" class="result-field-line">
+						<view class="result-field-line-label">地上部碳含量</view>
+						<view class="result-field-line-text coffee">{{calcResult.ca}}</view>
+						<view class="result-field-line-unit">kg C</view>
 					</view>
 					<view v-if="handleResultShowField('wb')" class="result-field-line">
-						<view class="result-field-line-label">地下部</view>
+						<view class="result-field-line-label">地下部生物量</view>
 						<view class="result-field-line-text">{{calcResult.wb}}</view>
 						<view class="result-field-line-unit">kg DW</view>
 					</view>
+					<view v-if="handleResultShowField('cb')" class="result-field-line">
+						<view class="result-field-line-label">地上部碳含量</view>
+						<view class="result-field-line-text coffee">{{calcResult.cb}}</view>
+						<view class="result-field-line-unit">kg C</view>
+					</view>
+					<view v-if="handleResultShowField('wt')" class="result-field-line">
+						<view class="result-field-line-label">总生物量</view>
+						<view class="result-field-line-text">{{calcResult.wt}}</view>
+						<view class="result-field-line-unit">kg DW</view>
+					</view>
 					<view v-if="handleResultShowField('cf')" class="result-field-line">
-						<view class="result-field-line-label">碳含量</view>
-						<view class="result-field-line-text">{{calcResult.cf}}</view>
+						<view class="result-field-line-label">总碳含量</view>
+						<view class="result-field-line-text coffee">{{calcResult.cf}}</view>
 						<view class="result-field-line-unit">kg C</view>
 					</view>
 				</view>
 			</view>
 		</uni-popup>
 
-		<uni-popup ref="densityPopup" type="bottom" :safe-area="false"  @change="e=>onPopupStatusChange(e.show)">
+		<uni-popup ref="densityPopup" type="bottom" :safe-area="false" @change="e=>onPopupStatusChange(e.show)">
 			<view class="popup-content">
 				<view class="popup-content-title">
 					<view class="title-text">常见木材密度(g·cm3)</view>
@@ -136,7 +148,7 @@
 				},
 				needCalcType: false,
 				densities: densities,
-				hasPoper:false
+				hasPoper: false
 			}
 		},
 		onLoad() {
@@ -229,7 +241,7 @@
 				this.formData.density = text;
 				this.closeDensityPopup();
 			},
-			onPopupStatusChange(show){
+			onPopupStatusChange(show) {
 				this.hasPoper = show;
 			}
 		},
@@ -258,15 +270,21 @@
 			display: flex;
 			align-items: center;
 			margin-top: 5px;
-			&-text{
+
+			&-text {
 				font-size: 12px;
 				color: #2979ff;
 				margin-right: 5px;
 			}
-			.search-icon{
+
+			.search-icon {
 				width: 12px;
 				height: 12px;
 			}
+		}
+
+		::v-deep .selected-item-active {
+			color: #2979ff;
 		}
 
 		.popup-content {
@@ -312,7 +330,7 @@
 					border-bottom: 1px solid #f0f0f0;
 
 					&-label {
-						width: 80px;
+						width: 120px;
 						text-align: right;
 						color: #666;
 						margin-right: 5px;
@@ -329,6 +347,10 @@
 						display: flex;
 						justify-content: flex-end;
 						margin-right: 20px;
+
+						&.coffee {
+							color: saddlebrown;
+						}
 					}
 
 					&-unit {

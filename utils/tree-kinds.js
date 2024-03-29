@@ -5,7 +5,17 @@ export const mangroveKinds = [{
 		text: "桐花树",
 		value: 1,
 		dbhHelpText: "请输入4-20之间的小数",
-		shapes: [shapeEnums.MACROPHANEROPHYTES, shapeEnums.SMALL_MACROPHANEROPHYTES, shapeEnums.UNDERGROWTH],
+		shapes: [{
+			text:shapeEnums.MACROPHANEROPHYTES.text + "（建议树高4米以上）",
+			value:shapeEnums.MACROPHANEROPHYTES.value
+		}, 
+		{
+			text:shapeEnums.SMALL_MACROPHANEROPHYTES.text + "（建议树高2-4米）",
+			value:shapeEnums.SMALL_MACROPHANEROPHYTES.value
+		}, {
+			text:shapeEnums.UNDERGROWTH.text + "（树高小于2米）",
+			value:shapeEnums.UNDERGROWTH.value
+		}],
 		fields: {
 			[shapeEnums.MACROPHANEROPHYTES.value]: [
 				"dbh", "height"

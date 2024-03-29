@@ -32,11 +32,14 @@ export default class Kandelia {
 	}
 	//乔木
 	calcByMacrophanerophytes(){
-		const wa = new Decimal(10).pow(new Decimal(1.053).times(Decimal.log10(new Decimal(this.#dbh).pow(2).times(this.#height))).plus(2.814));
-		const wb = new Decimal(10).pow(new Decimal(0.990).times(Decimal.log10(new Decimal(this.#dbh).pow(2).times(this.#height))).plus(2.433));
+		const wa = new Decimal(10).pow(new Decimal(1.053).times(Decimal.log10(new Decimal(this.#dbh).dividedBy(100).pow(2).times(this.#height))).plus(2.814));
+		const wb = new Decimal(10).pow(new Decimal(0.990).times(Decimal.log10(new Decimal(this.#dbh).dividedBy(100).pow(2).times(this.#height))).plus(2.433));
 		return {
 			wa: wa.toFixed(config.digitLen),
 			wb: wb.toFixed(config.digitLen),
+			wt: wa.plus(wb).toFixed(config.digitLen),
+			ca: this.calcCf(wa),
+			cb:this.calcCf(wb),
 			cf: this.calcCf(wa, wb)
 		}
 	}
@@ -47,6 +50,8 @@ export default class Kandelia {
 		return {
 			wt: wt.toFixed(config.digitLen),
 			wb: wb.toFixed(config.digitLen),
+			cb:this.calcCf(wb),
+			cf: this.calcCf(wt)
 		}
 	}
 	//小乔木
@@ -56,6 +61,9 @@ export default class Kandelia {
 		return {
 			wa: wa.toFixed(config.digitLen),
 			wb: wb.toFixed(config.digitLen),
+			wt: wa.plus(wb).toFixed(config.digitLen),
+			ca: this.calcCf(wa),
+			cb:this.calcCf(wb),
 			cf: this.calcCf(wa, wb)
 		}
 	}
@@ -66,6 +74,9 @@ export default class Kandelia {
 		return {
 			wa: wa.toFixed(config.digitLen),
 			wb: wb.toFixed(config.digitLen),
+			wt: wa.plus(wb).toFixed(config.digitLen),
+			ca: this.calcCf(wa),
+			cb:this.calcCf(wb),
 			cf: this.calcCf(wa, wb)
 		}
 	}

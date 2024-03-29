@@ -20,6 +20,9 @@ export default class Rhizophora {
 		return {
 			wa: wa.toFixed(config.digitLen),
 			wb: wb.toFixed(config.digitLen),
+			wt: wa.plus(wb).toFixed(config.digitLen),
+			ca: this.calcCf(wa),
+			cb:this.calcCf(wb),
 			cf:this.calcCf(wa,wb)
 		}
 	}
