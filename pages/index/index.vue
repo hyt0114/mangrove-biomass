@@ -22,13 +22,13 @@
 					<view class="form-tip" v-if="dbhHelpText">{{dbhHelpText}}</view>
 				</uni-forms-item>
 				<uni-forms-item label="冠幅" name='crown' v-if="showFields.crown">
-					<FormInput v-model:value="formData.crown" suffix="m2" />
+					<FormInput v-model:value="formData.crown" suffix="m" pow="2"/>
 				</uni-forms-item>
 				<uni-forms-item label="树高" name='height' v-if="showFields.height">
 					<FormInput v-model:value="formData.height" suffix="m" />
 				</uni-forms-item>
 				<uni-forms-item label="密度" name='density' v-if="showFields.density">
-					<FormInput v-model:value="formData.density" suffix="g.cm3" />
+					<FormInput v-model:value="formData.density" suffix="g.cm" pow="3"/>
 					<view class="form-helper" @click="onPopDensityList">
 						<view class="form-helper-text">查看常见木材密度</view>
 						<image src="/static/img/search.png" class="search-icon"></image>

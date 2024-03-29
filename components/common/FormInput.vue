@@ -1,7 +1,7 @@
 <template>
 	<view class="flex">
 		<uni-easyinput placeholder="请输入" type="digit" v-model="modelValue" @input="onInputChange"></uni-easyinput>
-		<view v-if="suffix" class="flex flex-shrink-0 items-center justify-center suffix">{{suffix}}</view>
+		<view v-if="suffix" class="flex flex-shrink-0 items-center justify-center suffix"><view class="suffix-wrap">{{suffix}}<view class="pow" v-if="pow">{{pow}}</view></view></view>
 	</view>
 </template>
 
@@ -9,6 +9,10 @@
 	export default {
 		props: {
 			suffix: {
+				type: String,
+				default: ''
+			},
+			pow:{
 				type: String,
 				default: ''
 			},
@@ -50,7 +54,7 @@
 		}
 	}
 	.suffix{
-		width: 3rem;
+		width: 3.5rem;
 		color:#666;
 		background-color: #f0f0f0;
 		border-top-right-radius: 0.25rem !important;
@@ -58,5 +62,17 @@
 		border-top:0.0625rem solid #dcdfe6;
 		border-right:0.0625rem solid #dcdfe6;
 		border-bottom:0.0625rem solid #dcdfe6;
+		font-size: 14px;
+		&-wrap{
+			position: relative;
+			width: fit-content;
+			.pow{
+				position: absolute;
+				top:-20%;
+				left:100%;
+				font-size: 12px;
+			}
+		}
+		
 	}
 </style>

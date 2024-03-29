@@ -1,6 +1,6 @@
 import Decimal from 'decimal.js';
 import config from "../config.js"
-//#海桑属
+//#无瓣海桑
 export default class Pagatpat  {
 	#dbh;
 	#height;
@@ -18,7 +18,7 @@ export default class Pagatpat  {
 		const wb = new Decimal(this.#dbh).pow(2).times(this.#height).pow(1.119).times(0.003);
 		const wt = new Decimal(this.#dbh).pow(2).times(this.#height).pow(1.002).times(0.033);
 		return {
-			wa: wt.toFixed(config.digitLen),
+			wa: wa.toFixed(config.digitLen),
 			wb: wb.toFixed(config.digitLen),
 			wt: wt.toFixed(config.digitLen),
 			ca: this.calcCf(wa),
