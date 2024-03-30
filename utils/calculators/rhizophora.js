@@ -14,9 +14,12 @@ export default class Rhizophora {
 		this.#shape = shape;
 	}
 	calc() {
-		const wa = new Decimal(0.235).times(new Decimal(this.#dbh).pow(2.42));
-		const wb = new Decimal(0.199).times(new Decimal(this.#density  || config.defaultDensity).pow(0.899)).times(new Decimal(this.#dbh)
-			.pow(2.22));
+		// const wa = new Decimal(0.235).times(new Decimal(c).pow(2.42));
+		// const wb = new Decimal(0.199).times(new Decimal(this.#density  || config.defaultDensity).pow(0.899)).times(new Decimal(this.#dbh)
+		// 	.pow(2.22));
+		const wa = new Decimal(10).pow(-1.832).times(new Decimal(this.#dbh).pow(2.42));
+		const wb = new Decimal(10).pow(-3.318).times(new Decimal(this.#dbh).pow(2.886));
+		
 		return {
 			wa: wa.toFixed(config.digitLen),
 			wb: wb.toFixed(config.digitLen),
@@ -25,6 +28,7 @@ export default class Rhizophora {
 			cb:this.calcCf(wb),
 			cf:this.calcCf(wa,wb)
 		}
+		
 	}
 	calcCf(...nums){
 		let total = new Decimal(0);

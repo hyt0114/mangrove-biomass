@@ -45,13 +45,15 @@ export default class Kandelia {
 	}
 	//矮灌木
 	calcByUndergrowth(){
-		const wt = new Decimal(this.#basal).pow(1.446).times(3.614);
-		const wb = new Decimal(this.#basal).pow(1.136).times(4.6);
+		const wt = new Decimal(this.#basal).times(10).pow(1.446).times(3.614).dividedBy(1000);
+		const wb = new Decimal(this.#basal).times(10).pow(1.136).times(4.6).dividedBy(1000);
 		return {
 			wt: wt.toFixed(config.digitLen),
+			wa: wt.minus(wb).toFixed(config.digitLen),
 			wb: wb.toFixed(config.digitLen),
 			cb:this.calcCf(wb),
-			cf: this.calcCf(wt)
+			cf: this.calcCf(wt),
+			ca:  this.calcCf(wt.minus(wb)),
 		}
 	}
 	//小乔木
@@ -69,8 +71,8 @@ export default class Kandelia {
 	}
 	//幼龄植株
 	calcByYoung(){
-		const wa = new Decimal(this.#basal).pow(2.454).times(10.16);
-		const wb = new Decimal(this.#basal).pow(2.064).times(7.649);
+		const wa = new Decimal(this.#basal).pow(2.454).times(10.16).dividedBy(1000);
+		const wb = new Decimal(this.#basal).pow(2.064).times(7.649).dividedBy(1000);
 		return {
 			wa: wa.toFixed(config.digitLen),
 			wb: wb.toFixed(config.digitLen),

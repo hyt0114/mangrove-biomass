@@ -68,7 +68,7 @@
 						<view class="result-field-line-unit">kg DW</view>
 					</view>
 					<view v-if="handleResultShowField('cb')" class="result-field-line">
-						<view class="result-field-line-label">地上部碳含量</view>
+						<view class="result-field-line-label">地下部碳含量</view>
 						<view class="result-field-line-text coffee">{{calcResult.cb}}</view>
 						<view class="result-field-line-unit">kg C</view>
 					</view>
