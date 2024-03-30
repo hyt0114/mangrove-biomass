@@ -2,15 +2,23 @@
 	<page-meta :page-style="'overflow:'+(hasPoper?'hidden':'visible')"></page-meta>
 	<view class="content">
 		<uni-forms label-align="right" label-width="5rem">
-			<uni-forms-item label="树种" name='kind'>
-				<uni-data-picker v-model="formData.kind" :localdata="mangroveKinds" popup-title="请选择"
+			<uni-forms-item label="树种" name='kind' class="overflow-hidden">
+				<!-- <uni-data-picker v-model="formData.kind" :localdata="mangroveKinds" popup-title="请选择"
 					@change="onKindChange" @popupopened="onPopupStatusChange(true)"
-					@popupclosed="onPopupStatusChange(false)"></uni-data-picker>
+					@popupclosed="onPopupStatusChange(false)"></uni-data-picker> -->
+				<view class="search-input-wrap">
+					<view class="search-input-wrap-text" @click="openTreeKindSelector">{{formData.kindText}}</view>
+					<uni-icons type="clear" size="22" color="rgb(192, 196, 204)" class="search-input-wrap-icon mr-5"
+						v-if="formData.kindText" @click="onKindChange(null)"></uni-icons>
+					<uni-icons type="search" size="22" color="rgb(192, 196, 204)" class="search-input-wrap-icon"
+						@click="openTreeKindSelector"></uni-icons>
+				</view>
 			</uni-forms-item>
 			<template v-if="formData.kind">
 				<uni-forms-item label="树形" name='shape'>
 					<uni-data-picker v-model="formData.shape" :localdata="shapes" popup-title="请选择"
-						@change="onShapeChange" :clear-icon="false" @popupopened="onPopupStatusChange(true)"
+					:clear-icon="false"
+						@change="onShapeChange" @popupopened="onPopupStatusChange(true)"
 						@popupclosed="onPopupStatusChange(false)"></uni-data-picker>
 				</uni-forms-item>
 				<uni-forms-item label="胸径" name='dbh' v-if="showFields.dbh">
@@ -22,13 +30,13 @@
 					<view class="form-tip" v-if="dbhHelpText">{{dbhHelpText}}</view>
 				</uni-forms-item>
 				<uni-forms-item label="冠幅" name='crown' v-if="showFields.crown">
-					<FormInput v-model:value="formData.crown" suffix="m" pow="2"/>
+					<FormInput v-model:value="formData.crown" suffix="m" pow="2" />
 				</uni-forms-item>
 				<uni-forms-item label="树高" name='height' v-if="showFields.height">
 					<FormInput v-model:value="formData.height" suffix="m" />
 				</uni-forms-item>
 				<uni-forms-item label="密度" name='density' v-if="showFields.density">
-					<FormInput v-model:value="formData.density" suffix="g.cm" pow="3"/>
+					<FormInput v-model:value="formData.density" suffix="g.cm" pow="3" />
 					<view class="form-helper" @click="onPopDensityList">
 						<view class="form-helper-text">查看常见木材密度</view>
 						<image src="/static/img/search.png" class="search-icon"></image>
@@ -38,13 +46,30 @@
 
 			<template v-if="needCalcType">
 				<view class="btn-group">
-					<button @click="calcBiomass(false)" class="btn-primary">使用胸径计算</button>
-					<button @click="calcBiomass(true)" class="btn-success">使用基径计算</button>
+					<button @click="calcBiomass(false)" class="btn btn-success">使用胸径计算</button>
+					<button @click="calcBiomass(true)" class="btn btn-primary">使用基径计算</button>
 				</view>
 			</template>
-			<template v-else><button @click="calcBiomass(false)" class="btn-primary">计算</button></template>
+			<template v-else><button @click="calcBiomass(false)" class="btn btn-success lg">计算</button></template>
 
 		</uni-forms>
+		<uni-popup ref="treeKindSelector" type="bottom" :safe-area="false" @change="e=>onPopupStatusChange(e.show)">
+			<view class="popup-content" style="height: 66vh;">
+				<view class="popup-content-title">
+					<view class="title-text">请选择</view>
+					<image src="/static/img/close.png" class="title-close-btn" @click="closeTreeKindSelector"></image>
+				</view>
+				<scroll-view scroll-y class="popup-content-scroll">
+					<view class="d-grid">
+						<view v-for="(item,index) in mangroveKinds" :key="index" class="grid-block"
+							@click="onKindChange(item.value,item.text)">
+							<image :src="item.img" class="tree-img"></image>
+							<view class="tree-text">{{item.text}}</view>
+						</view>
+					</view>
+				</scroll-view>
+			</view>
+		</uni-popup>
 		<uni-popup ref="resultPopup" type="bottom" :safe-area="false" @change="e=>onPopupStatusChange(e.show)">
 			<view class="popup-content">
 				<view class="popup-content-title">
@@ -127,6 +152,7 @@
 			return {
 				formData: {
 					kind: null,
+					kindText: "",
 					shape: null,
 					dbh: null,
 					basal: null,
@@ -155,15 +181,27 @@
 
 		},
 		methods: {
-			onKindChange(e) {
-				const selectKinds = e.detail.value;
-				if (selectKinds && selectKinds.length) {
-					const kind = selectKinds[0];
-					this.dbhHelpText = getDbhHelpText(kind.value);
-					this.shapes = getTreeShapes(kind.value);
-					this.needCalcType = getNeedCalcType(kind.value);
-					if (this.shapes && this.shapes.length) {
-						this.formData.shape = this.shapes[0].value;
+			openTreeKindSelector() {
+				this.$refs.treeKindSelector.open();
+			},
+			closeTreeKindSelector() {
+				this.$refs.treeKindSelector.close();
+			},
+			onKindChange(kind, text) {
+				if (kind) {
+					this.formData.kind = kind;
+					this.formData.kindText = text;
+					this.dbhHelpText = getDbhHelpText(kind);
+					const treeShapes = getTreeShapes(kind);
+					this.needCalcType = getNeedCalcType(kind);
+					if (treeShapes && treeShapes.length) {
+						this.shapes = treeShapes.map(item=>{
+							return {
+								text:item.text + (item.tip ? `（${item.tip}）` : ""),
+								value:item.value
+							}
+						})
+						this.formData.shape = treeShapes[0].value;
 						const fields = getFormFields(this.formData.kind, this.formData.shape);
 						if (fields && fields.length) {
 							for (let key in this.showFields) {
@@ -173,14 +211,18 @@
 					}
 				} else {
 					this.dbhHelpText = "";
-					this.shapes = [],
-						this.formData.shape = null;
+					this.shapes = [];
+					this.formData.kind = null;
+					this.formData.kindText = "";
+					this.formData.shape = null;
 					this.formData.dbh = null;
 					this.formData.basal = null;
 					this.formData.height = null;
 					this.formData.density = null;
 					this.formData.crown = null;
+					this.needCalcType = false;
 				}
+				this.closeTreeKindSelector();
 			},
 			onShapeChange(e) {
 				const selectShapes = e.detail.value;
@@ -260,6 +302,12 @@
 		background: linear-gradient(135deg, #fff 40%, #8cde9b);
 		box-sizing: border-box;
 
+		.bg-white {
+			::v-deep .uni-easyinput__content {
+				background-color: #fff !important;
+			}
+		}
+
 		.form-tip {
 			font-size: 12px;
 			color: #999;
@@ -294,7 +342,7 @@
 			background-color: #fff;
 			padding-bottom: 60px;
 			box-sizing: border-box;
-
+			background: linear-gradient(135deg, #fff 70%, #8cde9b);
 			.popup-content-title {
 				height: 38px;
 				font-size: 16px;
@@ -322,7 +370,7 @@
 				padding: 15px 10px;
 				box-sizing: border-box;
 				height: 100%;
-
+				
 				.result-field-line {
 					display: flex;
 					align-items: center;
@@ -410,15 +458,101 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
+		gap: 10px;
+		.btn {
+			flex: 1;
+		}
+	}
+
+	.btn {
+		font-size: 15px;
+		height: 40px;
+		border-radius: 40px;
+	
+		&::after {
+			display: none;
+		}
+
+		&.lg {
+			width: 80%;
+		}
+
 	}
 
 	.btn-primary {
-		background-color: #2979ff;
-		color: #fff;
+		color: #2979ff;
+		background-color: #fff;
+		border: 1px solid #2979ff;
 	}
 
 	.btn-success {
-		background-color: #18bc37;
-		color: #fff;
+		color: #18bc37;
+		background-color: #fff;
+		border: 1px solid #18bc37;
+
+	}
+
+	.d-grid {
+		width: 100%;
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		padding: 10px 0;
+		grid-row-gap: 10px;
+
+		.grid-block {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+
+			.tree-img {
+				width: 80px;
+				height: 80px;
+				border-radius: 10px;
+			}
+
+			.tree-text {
+				margin-top: 5px;
+				color: #666;
+				font-size: 12px;
+			}
+		}
+	}
+
+	.search-input-wrap {
+		display: flex;
+		width: 100%;
+		border: 0.0625rem solid #e5e5e5;
+		border-radius: 0.3125rem;
+		height: 2.1875rem;
+		align-items: center;
+		overflow: hidden;
+		padding: 0 0.625rem;
+		box-sizing: border-box;
+
+		&-text {
+			flex: 1;
+			height: 100%;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			color: #333;
+			display: flex;
+			align-items: center;
+		}
+
+		&-icon {
+			width: 22px;
+			flex-shrink: 0;
+		}
+	}
+
+	.overflow-hidden {
+		::v-deep .uni-forms-item__content {
+			overflow: hidden;
+		}
+	}
+
+	.mr-5 {
+		margin-right: 5px;
 	}
 </style>

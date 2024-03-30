@@ -61,7 +61,9 @@ export default class Aegiceras {
 		const wa = new Decimal(0.02039).times(new Decimal(this.#basal).pow(2).times(this.#height).pow(0.83749));
 		return {
 			wa: wa.toFixed(config.digitLen),
-			ca: this.calcCf(wa)
+			wt: wa.toFixed(config.digitLen),
+			ca: this.calcCf(wa),
+			cf: this.calcCf(wa),
 		}
 	}
 	calcCf(...nums) {
