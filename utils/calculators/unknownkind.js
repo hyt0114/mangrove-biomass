@@ -15,7 +15,7 @@ export default class UnknownKind {
 		this.#density = density;
 	}
 	static config = {
-		text: "未知",
+		text: "通用",
 		value: -1,
 		shapes: [{
 			...shapeEnums.MACROPHANEROPHYTES,
