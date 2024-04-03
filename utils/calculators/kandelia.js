@@ -1,5 +1,5 @@
 import Decimal from 'decimal.js';
-import config from "../config.js"
+import config from "../config.js";
 import {
 	shapeEnums
 } from "../enums.js";
@@ -14,6 +14,41 @@ export default class Kandelia {
 		this.#dbh = dbh;
 		this.#basal = basal;
 		this.#height = height;
+	}
+	static config = {
+		text: "秋茄",
+		value: 2,
+		dbhHelpText: "请输入4-15之间的小数",
+		shapes: [{
+				...shapeEnums.MACROPHANEROPHYTES,
+				tip: "建议树高3米以上"
+			}, {
+				...shapeEnums.UNDERGROWTH,
+				tip: "建议树高1.3米以下 "
+			}, {
+				...shapeEnums.SMALL_MACROPHANEROPHYTES,
+				tip: "建议树高1.5米左右"
+			},
+			{
+				...shapeEnums.YOUNG,
+				tip: "建议树高2米以下 "
+			}
+		],
+		fields: {
+			[shapeEnums.MACROPHANEROPHYTES.value]: [
+				"dbh", "height"
+			],
+			[shapeEnums.UNDERGROWTH.value]: [
+				"basal"
+			],
+			[shapeEnums.SMALL_MACROPHANEROPHYTES.value]: [
+				"basal", "height"
+			],
+			[shapeEnums.YOUNG.value]: [
+				"basal"
+			]
+		},
+		img: "/static/img/trees/kandelia.jpg"
 	}
 	setShape(shape) {
 		this.#shape = shape;

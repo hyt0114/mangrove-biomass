@@ -2,22 +2,23 @@
 	<page-meta :page-style="'overflow:'+(hasPoper?'hidden':'visible')"></page-meta>
 	<view class="content">
 		<uni-forms label-align="right" label-width="5rem">
-			<uni-forms-item label="树种" name='kind' class="overflow-hidden">
-				<!-- <uni-data-picker v-model="formData.kind" :localdata="mangroveKinds" popup-title="请选择"
-					@change="onKindChange" @popupopened="onPopupStatusChange(true)"
-					@popupclosed="onPopupStatusChange(false)"></uni-data-picker> -->
-				<view class="search-input-wrap">
-					<view class="search-input-wrap-text" @click="openTreeKindSelector">{{formData.kindText}}</view>
-					<uni-icons type="clear" size="22" color="rgb(192, 196, 204)" class="search-input-wrap-icon mr-5"
-						v-if="formData.kindText" @click="onKindChange(null)"></uni-icons>
-					<uni-icons type="search" size="22" color="rgb(192, 196, 204)" class="search-input-wrap-icon"
-						@click="openTreeKindSelector"></uni-icons>
-				</view>
+			<view class="tree-kind-wrap">
+				<uni-forms-item label="树种" name='kind'>
+					<view class="search-input-wrap">
+						<view class="search-input-wrap-text" @click="openTreeKindSelector">{{formData.kindText}}</view>
+						<uni-icons type="clear" size="22" color="rgb(192, 196, 204)" class="search-input-wrap-icon mr-5"
+							v-if="formData.kindText" @click="onKindChange(null)"></uni-icons>
+						<uni-icons type="search" size="22" color="rgb(192, 196, 204)" class="search-input-wrap-icon"
+							@click="openTreeKindSelector"></uni-icons>
+					</view>
+				</uni-forms-item>
+			</view>
+			<uni-forms-item label=" " v-if="formData.previewImg">
+				<image :src="formData.previewImg" class="tree-img-preview" @click="onPreviewImg"></image>
 			</uni-forms-item>
 			<template v-if="formData.kind">
 				<uni-forms-item label="树形" name='shape'>
-					<uni-data-picker v-model="formData.shape" :localdata="shapes" popup-title="请选择"
-					:clear-icon="false"
+					<uni-data-picker v-model="formData.shape" :localdata="shapes" popup-title="请选择" :clear-icon="false"
 						@change="onShapeChange" @popupopened="onPopupStatusChange(true)"
 						@popupclosed="onPopupStatusChange(false)"></uni-data-picker>
 				</uni-forms-item>
@@ -43,15 +44,15 @@
 					</view>
 				</uni-forms-item>
 			</template>
-
-			<template v-if="needCalcType">
-				<view class="btn-group">
-					<button @click="calcBiomass(false)" class="btn btn-success">使用胸径计算</button>
-					<button @click="calcBiomass(true)" class="btn btn-primary">使用基径计算</button>
-				</view>
-			</template>
-			<template v-else><button @click="calcBiomass(false)" class="btn btn-success lg">计算</button></template>
-
+			<view class="mt-20">
+				<template v-if="needCalcType">
+					<view class="btn-group">
+						<button @click="calcBiomass(false)" class="btn btn-success">使用胸径计算</button>
+						<button @click="calcBiomass(true)" class="btn btn-primary">使用基径计算</button>
+					</view>
+				</template>
+				<template v-else><button @click="calcBiomass(false)" class="btn btn-success lg">计算</button></template>
+			</view>
 		</uni-forms>
 		<uni-popup ref="treeKindSelector" type="bottom" :safe-area="false" @change="e=>onPopupStatusChange(e.show)">
 			<view class="popup-content" style="height: 66vh;">
@@ -59,10 +60,10 @@
 					<view class="title-text">请选择</view>
 					<image src="/static/img/close.png" class="title-close-btn" @click="closeTreeKindSelector"></image>
 				</view>
-				<scroll-view scroll-y class="popup-content-scroll">
+				<scroll-view scroll-y class="popup-content-scroll" enable-flex>
 					<view class="d-grid">
 						<view v-for="(item,index) in mangroveKinds" :key="index" class="grid-block"
-							@click="onKindChange(item.value,item.text)">
+							@click="onKindChange(item.value,item.text,item.img)">
 							<image :src="item.img" class="tree-img"></image>
 							<view class="tree-text">{{item.text}}</view>
 						</view>
@@ -117,7 +118,7 @@
 					<view class="title-text">常见木材密度(g·cm3)</view>
 					<image src="/static/img/close.png" class="title-close-btn" @click="closeDensityPopup"></image>
 				</view>
-				<scroll-view scroll-y class="popup-content-scroll">
+				<scroll-view scroll-y class="popup-content-scroll" enable-flex>
 					<view v-for="(item,index) in densities" :key="index" class="scroll-field-line">
 						<view class="scroll-field-line-label">{{item.text}}</view>
 						<view class="scroll-field-line-text">{{item.value}}</view>
@@ -135,7 +136,7 @@
 <script>
 	import {
 		mangroveKinds
-	} from '/utils/tree-kinds.js';
+	} from '/utils/calculators';
 	import FormInput from "/components/common/FormInput.vue";
 	import {
 		getDbhHelpText,
@@ -143,7 +144,9 @@
 		getFormFields,
 		getNeedCalcType
 	} from '/utils/form-utils.js'
-	import calc from "/utils/calculators/index.js";
+	import {
+		calc
+	} from "/utils/calculators";
 	import {
 		densities
 	} from "/utils/enums.js";
@@ -153,6 +156,7 @@
 				formData: {
 					kind: null,
 					kindText: "",
+					previewImg: null,
 					shape: null,
 					dbh: null,
 					basal: null,
@@ -187,18 +191,19 @@
 			closeTreeKindSelector() {
 				this.$refs.treeKindSelector.close();
 			},
-			onKindChange(kind, text) {
+			onKindChange(kind, text, img) {
 				if (kind) {
 					this.formData.kind = kind;
 					this.formData.kindText = text;
+					this.formData.previewImg = img;
 					this.dbhHelpText = getDbhHelpText(kind);
 					const treeShapes = getTreeShapes(kind);
 					this.needCalcType = getNeedCalcType(kind);
 					if (treeShapes && treeShapes.length) {
-						this.shapes = treeShapes.map(item=>{
+						this.shapes = treeShapes.map(item => {
 							return {
-								text:item.text + (item.tip ? `（${item.tip}）` : ""),
-								value:item.value
+								text: item.text + (item.tip ? `（${item.tip}）` : ""),
+								value: item.value
 							}
 						})
 						this.formData.shape = treeShapes[0].value;
@@ -214,6 +219,7 @@
 					this.shapes = [];
 					this.formData.kind = null;
 					this.formData.kindText = "";
+					this.formData.previewImg = null;
 					this.formData.shape = null;
 					this.formData.dbh = null;
 					this.formData.basal = null;
@@ -285,6 +291,13 @@
 			},
 			onPopupStatusChange(show) {
 				this.hasPoper = show;
+			},
+			onPreviewImg() {
+				// #ifdef APP-PLUS
+				uni.previewImage({
+					urls: [this.formData.previewImg],
+				})
+				// #endif
 			}
 		},
 		components: {
@@ -343,6 +356,7 @@
 			padding-bottom: 60px;
 			box-sizing: border-box;
 			background: linear-gradient(135deg, #fff 70%, #8cde9b);
+
 			.popup-content-title {
 				height: 38px;
 				font-size: 16px;
@@ -370,7 +384,7 @@
 				padding: 15px 10px;
 				box-sizing: border-box;
 				height: 100%;
-				
+
 				.result-field-line {
 					display: flex;
 					align-items: center;
@@ -459,6 +473,7 @@
 		align-items: center;
 		justify-content: space-between;
 		gap: 10px;
+
 		.btn {
 			flex: 1;
 		}
@@ -468,7 +483,7 @@
 		font-size: 15px;
 		height: 40px;
 		border-radius: 40px;
-	
+
 		&::after {
 			display: none;
 		}
@@ -546,7 +561,10 @@
 		}
 	}
 
-	.overflow-hidden {
+	.tree-kind-wrap {
+		::v-deep .uni-forms-item{
+			margin-bottom: 5px !important;
+		}
 		::v-deep .uni-forms-item__content {
 			overflow: hidden;
 		}
@@ -554,5 +572,15 @@
 
 	.mr-5 {
 		margin-right: 5px;
+	}
+
+	.mt-20 {
+		margin-top: 20px;
+	}
+
+	.tree-img-preview {
+		width: 60px;
+		height: 60px;
+		border-radius: 10px;
 	}
 </style>

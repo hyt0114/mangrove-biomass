@@ -1,8 +1,8 @@
 import Decimal from 'decimal.js';
-import config from "../config.js"
+import config from "../config.js";
 import {
 	shapeEnums
-} from "../enums.js"
+} from "../enums.js";
 //#白骨壤
 export default class Avicennia {
 	#dbh;
@@ -16,6 +16,27 @@ export default class Avicennia {
 		this.#basal = basal;
 		this.#height = height;
 		this.#crown = crown;
+	}
+	static config = {
+		text: "白骨壤",
+		value: 3,
+		dbhHelpText: "请输入0-35之间的小数",
+		shapes: [{
+			...shapeEnums.MACROPHANEROPHYTES,
+			tip: "建议树高2米以上"
+		}, {
+			...shapeEnums.SHRUB,
+			tip: "建议树高2米以上"
+		}],
+		fields: {
+			[shapeEnums.MACROPHANEROPHYTES.value]: [
+				"dbh", "height"
+			],
+			[shapeEnums.SHRUB.value]: [
+				"basal", "height", "crown"
+			],
+		},
+		img: "/static/img/trees/avicennia.jpg"
 	}
 	setShape(shape) {
 		this.#shape = shape;

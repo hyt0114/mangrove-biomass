@@ -1,5 +1,8 @@
 import Decimal from 'decimal.js';
 import config from "../config.js"
+import {
+	shapeEnums
+} from "../enums.js"
 //#海桑属
 export default class Sonneratia  {
 	#dbh;
@@ -9,6 +12,21 @@ export default class Sonneratia  {
 	constructor(dbh,height) {
 		this.#dbh = dbh;
 		this.#height = height;
+	}
+	static config = {
+		text: "海桑属",
+		value: 11,
+		dbhHelpText: "请输入2.5-13.0之间的小数",
+		shapes: [{
+			...shapeEnums.MACROPHANEROPHYTES,
+			tip: "建议树高3-7米"
+		}],
+		fields: {
+			[shapeEnums.MACROPHANEROPHYTES.value]: [
+				"dbh", "height"
+			],
+		},
+		img: "/static/img/trees/sonneratia.jpg"
 	}
 	setShape(shape) {
 		this.#shape = shape;

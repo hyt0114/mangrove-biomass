@@ -1,5 +1,5 @@
 import Decimal from 'decimal.js';
-import config from "../config.js"
+import config from "../config.js";
 import {
 	shapeEnums
 } from "../enums.js"
@@ -14,6 +14,24 @@ export default class BruguieraGymnorrhiza {
 		this.#dbh = dbh;
 		this.#basal = basal;
 		this.#height = height;
+	}
+	static config(customText, customImg) {
+		return {
+			text: customText || "木榄/海莲/尖瓣海莲",
+			value: 5,
+			dbhHelpText: "请输入0-25之间的小数",
+			shapes: [{
+				...shapeEnums.MACROPHANEROPHYTES,
+				tip: "建议胸径小于25厘米"
+			}],
+			fields: {
+				[shapeEnums.MACROPHANEROPHYTES.value]: [
+					"dbh", "basal", "height"
+				],
+			},
+			needCalcType: true,
+			img: customImg || "/static/img/trees/bruguiera-gymnorrhiza.jpg"
+		}
 	}
 	setShape(shape) {
 		this.#shape = shape;

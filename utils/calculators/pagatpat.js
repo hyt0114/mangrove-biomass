@@ -1,5 +1,8 @@
 import Decimal from 'decimal.js';
-import config from "../config.js"
+import config from "../config.js";
+import {
+	shapeEnums
+} from "../enums.js"
 //#无瓣海桑
 export default class Pagatpat  {
 	#dbh;
@@ -9,6 +12,21 @@ export default class Pagatpat  {
 	constructor(dbh,height) {
 		this.#dbh = dbh;
 		this.#height = height;
+	}
+	static config = {
+		text: "无瓣海桑",
+		value: 12,
+		dbhHelpText: "请输入6.1-13.0之间的小数",
+		shapes: [{
+			...shapeEnums.MACROPHANEROPHYTES,
+			tip: "建议树高6-13米"
+		}],
+		fields: {
+			[shapeEnums.MACROPHANEROPHYTES.value]: [
+				"dbh", "height"
+			],
+		},
+		img: "/static/img/trees/pagatpat.jpg"
 	}
 	setShape(shape) {
 		this.#shape = shape;

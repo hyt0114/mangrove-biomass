@@ -1,5 +1,8 @@
 import Decimal from 'decimal.js';
 import config from "../config.js"
+import {
+	shapeEnums
+} from "../enums.js"
 //#红海榄
 export default class RhizophoraStylosaGriff {
 	#dbh;
@@ -9,6 +12,21 @@ export default class RhizophoraStylosaGriff {
 	constructor(dbh,density) {
 		this.#dbh = dbh;
 		this.#density = density;
+	}
+	static config = {
+		text: "红海榄",
+		value: 4,
+		dbhHelpText: "请输入0-12.5之间的小数",
+		shapes: [{
+			...shapeEnums.MACROPHANEROPHYTES,
+			tip: "建议树高4-6.5米"
+		}],
+		fields: {
+			[shapeEnums.MACROPHANEROPHYTES.value]: [
+				"dbh", "density"
+			],
+		},
+		img: "/static/img/trees/rhizophora-stylosa-griff.jpg"
 	}
 	setShape(shape) {
 		this.#shape = shape;

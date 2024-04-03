@@ -1,5 +1,8 @@
 import Decimal from 'decimal.js';
 import config from "../config.js"
+import {
+	shapeEnums
+} from "../enums.js"
 //#通用方程
 export default class UnknownKind {
 
@@ -10,6 +13,20 @@ export default class UnknownKind {
 	constructor(dbh, density) {
 		this.#dbh = dbh;
 		this.#density = density;
+	}
+	static config = {
+		text: "未知",
+		value: -1,
+		shapes: [{
+			...shapeEnums.MACROPHANEROPHYTES,
+			tip: "建议胸径小于45厘米"
+		}],
+		fields: {
+			[shapeEnums.MACROPHANEROPHYTES.value]: [
+				"dbh", "density"
+			],
+		},
+		img: "/static/img/trees/forest.png"
 	}
 	setShape(shape) {
 		this.#shape = shape;

@@ -8,14 +8,28 @@ import Rhizophora from "./rhizophora.js"
 import Sonneratia from "./sonneratia"
 import Pagatpat from "./pagatpat"
 import UnknownKind from "./unknownkind.js"
-
+export const mangroveKinds = [
+	Aegiceras.config,
+	Kandelia.config,
+	Avicennia.config,
+	RhizophoraStylosaGriff.config,
+	BruguieraGymnorrhiza.config("木榄","/static/img/trees/bruguiera-gymnorrhiza.jpg"),
+	BruguieraGymnorrhiza.config("海莲","/static/img/trees/bruguiera-sexangula.jpg"),
+	BruguieraGymnorrhiza.config("尖瓣海莲","/static/img/trees/bruguiera-sexangula-cuspid.jpg"),
+	CeriopsTagal.config,
+	Rhizophora.config("红树","/static/img/trees/rhizophora.jpg"),
+	Rhizophora.config("拉氏红树","/static/img/trees/rhizophora-lamarckii-montrouz.jpg"),
+	Sonneratia.config,
+	Pagatpat.config,
+	UnknownKind.config,
+]
 /**
  * @param {Object} type 物种
  * @param {Object} dbh  胸径/基径
  * @param {Object} height 高度
  * @param {Object} density 密度
  */
-export default function calc({
+export function calc({
 	type,
 	shape,
 	dbh,

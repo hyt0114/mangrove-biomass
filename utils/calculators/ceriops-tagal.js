@@ -1,5 +1,8 @@
 import Decimal from 'decimal.js';
-import config from "../config.js"
+import config from "../config.js";
+import {
+	shapeEnums
+} from "../enums.js"
 //#角木果
 export default class CeriopsTagal  {
 	#dbh;
@@ -7,6 +10,21 @@ export default class CeriopsTagal  {
 	#rate=0.46;
 	constructor(dbh) {
 		this.#dbh = dbh;
+	}
+	static config = {
+		text: "角木果",
+		value: 8,
+		dbhHelpText: "请输入0-8之间的小数",
+		shapes: [{
+			...shapeEnums.SMALL_MACROPHANEROPHYTES,
+			tip: "建议胸径小于8厘米"
+		}],
+		fields: {
+			[shapeEnums.SMALL_MACROPHANEROPHYTES.value]: [
+				"dbh"
+			],
+		},
+		img: "/static/img/trees/ceriops-tagal.jpg"
 	}
 	setShape(shape) {
 		this.#shape = shape;

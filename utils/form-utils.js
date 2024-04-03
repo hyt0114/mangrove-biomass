@@ -1,6 +1,6 @@
 import {
 	mangroveKinds
-} from "./tree-kinds.js";
+} from "./calculators";
 
 export function getDbhHelpText(kind) {
 	const tree = mangroveKinds.find(t => t.value == kind);

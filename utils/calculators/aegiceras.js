@@ -15,6 +15,35 @@ export default class Aegiceras {
 		this.#basal = basal;
 		this.#height = height;
 	}
+	static config = {
+		text: "桐花树",
+		value: 1,
+		dbhHelpText: "请输入4-20之间的小数",
+		shapes: [{
+				...shapeEnums.MACROPHANEROPHYTES,
+				tip: "建议树高4米以上"
+			},
+			{
+				...shapeEnums.SMALL_MACROPHANEROPHYTES,
+				tip: "建议树高2-4米"
+			}, {
+				...shapeEnums.UNDERGROWTH,
+				tip: "建议树高2米以下 "
+			}
+		],
+		fields: {
+			[shapeEnums.MACROPHANEROPHYTES.value]: [
+				"dbh", "height"
+			],
+			[shapeEnums.SMALL_MACROPHANEROPHYTES.value]: [
+				"dbh"
+			],
+			[shapeEnums.UNDERGROWTH.value]: [
+				"basal", "height"
+			]
+		},
+		img: "/static/img/trees/aegiceras.jpg"
+	}
 	setShape(shape) {
 		this.#shape = shape;
 	}

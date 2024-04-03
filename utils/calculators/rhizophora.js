@@ -1,14 +1,34 @@
 import Decimal from 'decimal.js';
-import config from "../config.js"
+import config from "../config.js";
+import {
+	shapeEnums
+} from "../enums.js"
 //#红树、拉氏红树
 export default class Rhizophora {
 	#dbh;
 	#density;
 	#shape;
-	#rate=0.46;
+	#rate = 0.46;
 	constructor(dbh, density) {
 		this.#dbh = dbh;
 		this.#density = density;
+	}
+	static config(customText, customImg) {
+		return {
+			text: customText || "红树/拉氏红树",
+			value: 9,
+			dbhHelpText: "请输入0-28之间的小数",
+			shapes: [{
+				...shapeEnums.MACROPHANEROPHYTES,
+				tip: "建议胸径小于28厘米"
+			}],
+			fields: {
+				[shapeEnums.MACROPHANEROPHYTES.value]: [
+					"dbh"
+				],
+			},
+			img: customImg || "/static/img/trees/rhizophora.jpg"
+		}
 	}
 	setShape(shape) {
 		this.#shape = shape;
@@ -19,26 +39,26 @@ export default class Rhizophora {
 		// 	.pow(2.22));
 		const wa = new Decimal(10).pow(-1.832).times(new Decimal(this.#dbh).pow(2.42));
 		const wb = new Decimal(10).pow(-3.318).times(new Decimal(this.#dbh).pow(2.886));
-		
+
 		return {
 			wa: wa.toFixed(config.digitLen),
 			wb: wb.toFixed(config.digitLen),
 			wt: wa.plus(wb).toFixed(config.digitLen),
 			ca: this.calcCf(wa),
-			cb:this.calcCf(wb),
-			cf:this.calcCf(wa,wb)
+			cb: this.calcCf(wb),
+			cf: this.calcCf(wa, wb)
 		}
-		
+
 	}
-	calcCf(...nums){
+	calcCf(...nums) {
 		let total = new Decimal(0);
-		nums.forEach(num=>{
+		nums.forEach(num => {
 			total = total.plus(num)
 		})
 		return total.times(this.#rate).toFixed(config.digitLen);
 	}
-	validate(){
-		if(!this.#dbh){
+	validate() {
+		if (!this.#dbh) {
 			throw new Error("请输入胸径");
 		}
 	}

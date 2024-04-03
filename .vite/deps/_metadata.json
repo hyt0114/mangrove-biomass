@@ -1,11 +1,11 @@
 {
-  "hash": "e3171d71",
-  "browserHash": "6f61ca61",
+  "hash": "062b2b57",
+  "browserHash": "0f5e1669",
   "optimized": {
     "decimal.js": {
       "src": "../../node_modules/decimal.js/decimal.mjs",
       "file": "decimal__js.js",
-      "fileHash": "9539957d",
+      "fileHash": "500191cd",
       "needsInterop": false
     }
   },
