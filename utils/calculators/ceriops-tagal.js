@@ -1,18 +1,39 @@
 import Decimal from 'decimal.js';
-import config from "../config.js"
+import config from "../config.js";
+import {
+	shapeEnums
+} from "../enums.js"
 //#角木果
 export default class CeriopsTagal  {
 	#dbh;
+	#shape;
 	#rate=0.46;
 	constructor(dbh) {
 		this.#dbh = dbh;
 	}
+	static config = {
+		text: "角木果",
+		value: 8,
+		dbhHelpText: "请输入0-8之间的小数",
+		shapes: [{
+			...shapeEnums.SMALL_MACROPHANEROPHYTES,
+			tip: "建议胸径小于8厘米"
+		}],
+		fields: {
+			[shapeEnums.SMALL_MACROPHANEROPHYTES.value]: [
+				"dbh"
+			],
+		},
+		img: "/static/img/trees/ceriops-tagal.jpg"
+	}
+	setShape(shape) {
+		this.#shape = shape;
+	}
 	calc() {
-		this.validator();
-		const whole = new Decimal(0.5199).times(new Decimal(this.#dbh).pow(1.953));
+		const wt = new Decimal(this.#dbh).pow(1.953).times(0.5199);
 		return {
-			whole: whole.toFixed(config.digitLen),
-			cf:this.calcCf(whole)
+			wt: wt.toFixed(config.digitLen),
+			cf:this.calcCf(wt)
 		}
 	}
 	calcCf(...nums){
@@ -22,9 +43,9 @@ export default class CeriopsTagal  {
 		})
 		return total.times(this.#rate).toFixed(config.digitLen);
 	}
-	validator(){
+	validate(){
 		if(!this.#dbh){
-			throw new Error("请输入胸径/基径");
+			throw new Error("请输入胸径");
 		}
 	}
 }

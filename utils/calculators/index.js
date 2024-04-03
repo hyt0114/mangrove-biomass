@@ -6,33 +6,65 @@ import BruguieraGymnorrhiza from "./bruguiera-gymnorrhiza.js"
 import CeriopsTagal from "./ceriops-tagal.js"
 import Rhizophora from "./rhizophora.js"
 import Sonneratia from "./sonneratia"
+import Pagatpat from "./pagatpat"
 import UnknownKind from "./unknownkind.js"
-
+export const mangroveKinds = [
+	Aegiceras.config,
+	Kandelia.config,
+	Avicennia.config,
+	RhizophoraStylosaGriff.config,
+	BruguieraGymnorrhiza.config("木榄","/static/img/trees/bruguiera-gymnorrhiza.jpg"),
+	BruguieraGymnorrhiza.config("海莲","/static/img/trees/bruguiera-sexangula.jpg"),
+	BruguieraGymnorrhiza.config("尖瓣海莲","/static/img/trees/bruguiera-sexangula-cuspid.jpg"),
+	CeriopsTagal.config,
+	Rhizophora.config("红树","/static/img/trees/rhizophora.jpg"),
+	Rhizophora.config("拉氏红树","/static/img/trees/rhizophora-lamarckii-montrouz.jpg"),
+	Sonneratia.config,
+	Pagatpat.config,
+	UnknownKind.config,
+]
 /**
  * @param {Object} type 物种
  * @param {Object} dbh  胸径/基径
  * @param {Object} height 高度
  * @param {Object} density 密度
  */
-export default function calc(type, dbh, height, density) {
+export function calc({
+	type,
+	shape,
+	dbh,
+	basal,
+	height,
+	density,
+	crown,
+	exts
+}) {
+	let targetTreeCalc = null;
 	if (type === 1) {
-		return new Aegiceras(dbh, height).calc();
+		targetTreeCalc = new Aegiceras(dbh, basal, height)
 	} else if (type === 2) {
-		return new Kandelia(dbh, height).calc();
+		targetTreeCalc = new Kandelia(dbh, basal, height)
 	} else if (type === 3) {
-		return new Avicennia(dbh).calc();
+		targetTreeCalc = new Avicennia(dbh, basal, height, crown)
 	} else if (type === 4) {
-		return new RhizophoraStylosaGriff(dbh, height).calc();
+		targetTreeCalc = new RhizophoraStylosaGriff(dbh, density)
 	} else if (type === 5 || type === 6 || type === 7) {
-		return new BruguieraGymnorrhiza(dbh).calc();
+		targetTreeCalc = new BruguieraGymnorrhiza(dbh, basal, height)
 	} else if (type === 8) {
-		return new CeriopsTagal(dbh).calc();
+		targetTreeCalc = new CeriopsTagal(dbh)
 	} else if (type === 9 || type === 10) {
-		return new Rhizophora(dbh,density).calc();
-	}else if (type === 11) {
-		return new Sonneratia(dbh,height).calc();
+		targetTreeCalc = new Rhizophora(dbh, density)
+	} else if (type === 11) {
+		targetTreeCalc = new Sonneratia(dbh, height)
+	} else if (type === 12) {
+		targetTreeCalc = new Pagatpat(dbh, height)
 	} else if (type === -1) {
-		return new UnknownKind(dbh, density).calc();
+		targetTreeCalc = new UnknownKind(dbh, density)
+	}
+	if (targetTreeCalc) {
+		targetTreeCalc.setShape(shape);
+		targetTreeCalc.validate(exts);
+		return targetTreeCalc.calc(exts);
 	}
 	return null;
 }

@@ -1,51 +1,116 @@
 import Decimal from 'decimal.js';
-import config from "../config.js"
+import config from "../config.js";
+import {
+	shapeEnums
+} from "../enums.js";
 //#桐花树
 export default class Aegiceras {
 	#dbh;
+	#basal;
 	#height;
+	#shape;
 	#rate = 0.44
-	constructor(dbh, height) {
+	constructor(dbh, basal, height) {
 		this.#dbh = dbh;
+		this.#basal = basal;
 		this.#height = height;
 	}
+	static config = {
+		text: "桐花树",
+		value: 1,
+		dbhHelpText: "请输入4-20之间的小数",
+		shapes: [{
+				...shapeEnums.MACROPHANEROPHYTES,
+				tip: "建议树高4米以上"
+			},
+			{
+				...shapeEnums.SMALL_MACROPHANEROPHYTES,
+				tip: "建议树高2-4米"
+			}, {
+				...shapeEnums.UNDERGROWTH,
+				tip: "建议树高2米以下 "
+			}
+		],
+		fields: {
+			[shapeEnums.MACROPHANEROPHYTES.value]: [
+				"dbh", "height"
+			],
+			[shapeEnums.SMALL_MACROPHANEROPHYTES.value]: [
+				"dbh"
+			],
+			[shapeEnums.UNDERGROWTH.value]: [
+				"basal", "height"
+			]
+		},
+		img: "/static/img/trees/aegiceras.jpg"
+	}
+	setShape(shape) {
+		this.#shape = shape;
+	}
 	calc() {
-		this.validator();
-		if (this.#height && this.#height < 2) {
-			//高度小于2
-			return this.calcSeparate();
-		} else {
-			return this.calcWhole();
+		if (this.#shape == shapeEnums.MACROPHANEROPHYTES.value) {
+			return this.calcByMacrophanerophytes();
+		} else if (this.#shape == shapeEnums.SMALL_MACROPHANEROPHYTES.value) {
+			return this.calcBySmallMacrophanerophytes();
+		} else if (this.#shape == shapeEnums.UNDERGROWTH.value) {
+			return this.calcByUndergrowth();
 		}
+		return {}
 	}
-	calcSeparate() {
-		const top = new Decimal(0.02039).times(new Decimal(this.#dbh).pow(2).times(this.#height).pow(0.83749));
-		const bottom = top.dividedBy(7)
+	//乔木
+	calcByMacrophanerophytes() {
+		const wa = new Decimal(10).pow(new Decimal(1.496).plus(new Decimal(0.465).times(Decimal.log10(new Decimal(
+			this.#dbh).dividedBy(10).pow(2).times(this.#height)))));
+		const wb = new Decimal(10).pow(new Decimal(0.967).plus(new Decimal(0.303).times(Decimal.log10(new Decimal(
+			this.#dbh).dividedBy(10).pow(2).times(this.#height)))));
 		return {
-			top: top.toFixed(config.digitLen),
-			bottom: bottom.toFixed(config.digitLen),
-			cf: this.calcCf(top,bottom)
+			wa: wa.toFixed(config.digitLen),
+			wb: wb.toFixed(config.digitLen),
+			wt: wa.plus(wb).toFixed(config.digitLen),
+			ca: this.calcCf(wa),
+			cb: this.calcCf(wb),
+			cf: this.calcCf(wa, wb)
 		}
 	}
-	calcWhole() {
-		const whole = new Decimal(0.780778).times(this.#dbh).minus(0.325215);
+	//小乔木
+	calcBySmallMacrophanerophytes() {
+		const wa = new Decimal(0.644347).times(this.#dbh).minus(0.425066);
+		const wb = new Decimal(0.163242).times(this.#dbh).minus(0.10423);
 		return {
-			whole: whole.toFixed(config.digitLen),
-			cf: this.calcCf(whole)
+			wa: wa.toFixed(config.digitLen),
+			wb: wb.toFixed(config.digitLen),
+			wt: wa.plus(wb).toFixed(config.digitLen),
+			ca: this.calcCf(wa),
+			cb: this.calcCf(wb),
+			cf: this.calcCf(wa, wb)
 		}
 	}
-	calcCf(...nums){
+	//矮灌木
+	calcByUndergrowth() {
+		const wa = new Decimal(0.02039).times(new Decimal(this.#basal).pow(2).times(this.#height).pow(0.83749));
+		return {
+			wa: wa.toFixed(config.digitLen),
+			wt: wa.toFixed(config.digitLen),
+			ca: this.calcCf(wa),
+			cf: this.calcCf(wa),
+		}
+	}
+	calcCf(...nums) {
 		let total = new Decimal(0);
-		nums.forEach(num=>{
+		nums.forEach(num => {
 			total = total.plus(num)
 		})
 		return total.times(this.#rate).toFixed(config.digitLen);
 	}
-	validator() {
-		if (!this.#dbh) {
-			throw new Error("请输入胸径/基径");
+	validate() {
+		if (!this.#dbh && (this.#shape == shapeEnums.MACROPHANEROPHYTES.value || this.#shape == shapeEnums
+				.SMALL_MACROPHANEROPHYTES.value)) {
+			throw new Error("请输入胸径");
 		}
-		if (!this.#height) {
+		if (!this.#basal && this.#shape == shapeEnums.UNDERGROWTH.value) {
+			throw new Error("请输入基径");
+		}
+		if (!this.#height && this.#shape != shapeEnums.SMALL_MACROPHANEROPHYTES.value) {
 			throw new Error("请输入树高");
 		}
 	}

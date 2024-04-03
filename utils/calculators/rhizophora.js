@@ -1,35 +1,65 @@
 import Decimal from 'decimal.js';
-import config from "../config.js"
+import config from "../config.js";
+import {
+	shapeEnums
+} from "../enums.js"
 //#红树、拉氏红树
 export default class Rhizophora {
 	#dbh;
 	#density;
-	#rate=0.46
+	#shape;
+	#rate = 0.46;
 	constructor(dbh, density) {
 		this.#dbh = dbh;
 		this.#density = density;
 	}
-	calc() {
-		this.validator();
-		const top = new Decimal(0.235).times(new Decimal(this.#dbh).pow(2.42));
-		const bottom = new Decimal(0.199).times(new Decimal(this.#density  || config.defaultDensity).pow(0.899)).times(new Decimal(this.#dbh)
-			.pow(2.22));
+	static config(customText, customImg) {
 		return {
-			top: top.toFixed(config.digitLen),
-			bottom: bottom.toFixed(config.digitLen),
-			cf:this.calcCf(top,bottom)
+			text: customText || "红树/拉氏红树",
+			value: 9,
+			dbhHelpText: "请输入0-28之间的小数",
+			shapes: [{
+				...shapeEnums.MACROPHANEROPHYTES,
+				tip: "建议胸径小于28厘米"
+			}],
+			fields: {
+				[shapeEnums.MACROPHANEROPHYTES.value]: [
+					"dbh"
+				],
+			},
+			img: customImg || "/static/img/trees/rhizophora.jpg"
 		}
 	}
-	calcCf(...nums){
+	setShape(shape) {
+		this.#shape = shape;
+	}
+	calc() {
+		// const wa = new Decimal(0.235).times(new Decimal(c).pow(2.42));
+		// const wb = new Decimal(0.199).times(new Decimal(this.#density  || config.defaultDensity).pow(0.899)).times(new Decimal(this.#dbh)
+		// 	.pow(2.22));
+		const wa = new Decimal(10).pow(-1.832).times(new Decimal(this.#dbh).pow(2.42));
+		const wb = new Decimal(10).pow(-3.318).times(new Decimal(this.#dbh).pow(2.886));
+
+		return {
+			wa: wa.toFixed(config.digitLen),
+			wb: wb.toFixed(config.digitLen),
+			wt: wa.plus(wb).toFixed(config.digitLen),
+			ca: this.calcCf(wa),
+			cb: this.calcCf(wb),
+			cf: this.calcCf(wa, wb)
+		}
+
+	}
+	calcCf(...nums) {
 		let total = new Decimal(0);
-		nums.forEach(num=>{
+		nums.forEach(num => {
 			total = total.plus(num)
 		})
 		return total.times(this.#rate).toFixed(config.digitLen);
 	}
-	validator(){
-		if(!this.#dbh){
-			throw new Error("请输入胸径/基径");
+	validate() {
+		if (!this.#dbh) {
+			throw new Error("请输入胸径");
 		}
 	}
 }
